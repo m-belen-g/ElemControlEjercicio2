@@ -245,6 +245,7 @@ ax.plot(T, U[1,:], label=r'$Q2$')
 ax.set_xlabel('Tiempo [s]')
 ax.set_ylabel('Potencia en % pot Max ')
 ax.legend();
+ax.grid();
 ```
 
 De esta figura vemos que $Q1$ y $Q2$ valen lo que queríamos. Por lo tanto estamos listos realizar la simulación.
@@ -264,10 +265,12 @@ t,y = ctrl.input_output_response(tclab_sys, T, U, X0)
 
 ```{code-cell} ipython3
 fig, ax = plt.subplots(figsize=(10,4))
-ax.plot(T, y[1,:], label=r'$T1$')
+ax.plot(T, y[0,:], label=r'$T1$')
+ax.plot(T, y[1,:], label=r'$T2$')
 ax.set_xlabel('Tiempo [s]')
 ax.set_ylabel('Temperatura [°C] ')
 ax.legend();
+ax.grid();
 ```
 
 Del gráfico puede observarse que se trata de un sistema de primer orden con una demora. Una acumulación.
@@ -286,7 +289,49 @@ e^{-Ls} = \frac{1-0.5Ls}{1+0.5Ls}
 \end{align*}
 $$
 
-Graficamente $T_2$ sale a un valor de 0,63k
+Graficamente $T_2$ sale a un valor de 0,63k.
+
+Primero defino las variables del sistema:
+
+```{code-cell} ipython3
+sigma=1/(357-200)
+
+k=3*sigma/10
+k
+```
+
+```{code-cell} ipython3
+I=k/(s+sigma)
+I
+```
+
+```{code-cell} ipython3
+t,z=ctrl.step_response(I)
+```
+
+```{code-cell} ipython3
+fig, ax = plt.subplots(figsize=(10,4))
+ax.plot(200+t[:],19+10*z[:], label=r'$T1 Modelo$')
+ax.set_xlabel('Tiempo [s]')
+ax.plot(T, y[0,:], label=r'$T1 Real$')
+ax.set_ylabel('Temperatura [°C] ')
+ax.legend();
+ax.grid();
+```
+
+Se obtuvo un buen ajuste de primer orden con respecto al modelo original, a pesar de que el original presentaba una derivada nula en el origen.
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
+```
 
 ```{code-cell} ipython3
 
